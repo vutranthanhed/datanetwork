@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataNetwork - Peer Research Data Exchange</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <h1 class="logo">DataNetwork</h1>
+            <div id="nav-menu">
+                <!-- Shown when NOT logged in -->
+                <div id="auth-buttons" class="nav-section">
+                    <button id="login-btn" class="btn btn-secondary">Login</button>
+                    <button id="signup-btn" class="btn btn-primary">Sign Up</button>
+                </div>
+                <!-- Shown when logged in -->
+                <div id="user-menu" class="nav-section" style="display: none;">
+                    <span id="user-email" class="user-info"></span>
+                    <span id="user-balance" class="user-info points-badge">0 pts</span>
+                    <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        
+        <!-- Landing Page (shown when not logged in) -->
+        <section id="landing-page">
+            <div class="hero">
+                <h1>Exchange Research Data with Your Peers</h1>
+                <p class="subtitle">Earn points by contributing data. Spend points to request data. All peer-to-peer.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-large btn-primary" onclick="showSignup()">Get Started</button>
+                    <button class="btn btn-large btn-secondary" onclick="showLogin()">Login</button>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>🎯 Request Data</h3>
+                    <p>Need survey responses or observations? Post a request and offer points.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 Earn Points</h3>
+                    <p>Contribute data to others' projects and build your point balance.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤝 Fair Exchange</h3>
+                    <p>Transparent reputation system and community dispute resolution.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard (shown when logged in) -->
+        <section id="dashboard" style="display: none;">
+            <div class="dashboard-header">
+                <h2>Dashboard</h2>
+                <button id="new-request-btn" class="btn btn-primary">+ New Request</button>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3 id="stat-balance">0</h3>
+                    <p>Point Balance</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-earned">0</h3>
+                    <p>Total Earned</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-requests">0</h3>
+                    <p>Requests Made</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-fulfilled">0</h3>
+                    <p>Fulfilled</p>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="available">Available Requests</button>
+                <button class="tab-btn" data-tab="my-requests">My Requests</button>
+                <button class="tab-btn" data-tab="my-claims">My Claims</button>
+            </div>
+
+            <div class="tab-content">
+                <div id="available-tab" class="tab-panel active">
+                    <div id="available-requests" class="requests-grid">
+                        <p class="loading">Loading requests...</p>
+                    </div>
+                </div>
+
+                <div id="my-requests-tab" class="tab-panel">
+                    <div id="my-requests-list" class="requests-grid">
+                        <p class="loading">Loading your requests...</p>
+                    </div>
+                </div>
+
+                <div id="my-claims-tab" class="tab-panel">
+                    <div id="my-claims-list" class="requests-grid">
+                        <p class="loading">Loading your claims...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Login -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('login-modal')">&times;</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                <p class="form-footer">Don't have an account? <a href="#" onclick="switchToSignup()">Sign up</a></p>
+            </form>
+            <div id="login-error" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Modal: Signup -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signup-modal')">&times;</span>
+            <h2>Create Account</h2>
+            <form id="signup-form">
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Password (min 6 characters)" required>
+                <input type="password" id="signup-password-confirm" placeholder="Confirm Password" required>
+                <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                <p class="form-footer">Already have an account? <a href="#" onclick="switchToLogin()">Login</a></p>
+            </form>
+            <div id="signup-error" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Modal: New Request -->
+    <div id="new-request-modal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close" onclick="closeModal('new-request-modal')">&times;</span>
+            <h2>Create New Request</h2>
+            <form id="new-request-form">
+                <label>Title</label>
+                <input type="text" id="request-title" placeholder="Brief description" required>
+                
+                <label>Category</label>
+                <select id="request-category" required>
+                    <option value="">Select...</option>
+                    <option value="survey">Survey</option>
+                    <option value="observation">Observation</option>
+                    <option value="measurement">Measurement</option>
+                    <option value="other">Other</option>
+                </select>
+                
+                <label>Description</label>
+                <textarea id="request-description" rows="4" placeholder="Full details of what you need" required></textarea>
+                
+                <label>Instructions</label>
+                <textarea id="request-instructions" rows="3" placeholder="How should participants submit data?" required></textarea>
+                
+                <label>Points Offered (per response)</label>
+                <input type="number" id="request-points" min="1" placeholder="10" required>
+                
+                <label>Number of Responses Needed</label>
+                <input type="number" id="request-responses" min="1" placeholder="50" required>
+                
+                <label>Deadline (optional)</label>
+                <input type="date" id="request-deadline">
+                
+                <button type="submit" class="btn btn-primary btn-block">Create Request</button>
+            </form>
+            <div id="request-error" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Your JavaScript Files -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
